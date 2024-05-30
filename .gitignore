@@ -1,0 +1,5 @@
+App-this-tabledata-*
+.build
+*~
+nytprof*
+.DS_Store

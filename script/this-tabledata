@@ -1,0 +1,82 @@
+#!perl
+
+use 5.010001;
+use strict;
+use warnings;
+use Log::ger::Screen;
+
+use App::ThisDist 'this_mod';
+use Cwd;
+use Getopt::Long;
+
+# AUTHORITY
+# DATE
+# DIST
+# VERSION
+
+my ($quiet, $namespace_prefix, $extract_version);
+$namespace_prefix = "TableData";
+Getopt::Long::Configure("bundling", "no_ignore_case");
+GetOptions(
+    "quiet|q" => \$quiet,
+    "extract-version|V" => \$extract_version,
+);
+
+my $cwd = getcwd();
+my $mod = this_mod($cwd, $extract_version);
+
+if (defined $mod) {
+    if (defined $namespace_prefix && length $namespace_prefix) {
+        $namespace_prefix =~ s/::\z//;
+        $mod =~ s/\A\Q$namespace_prefix\E(?:::|\z)//i;
+    }
+    print $mod, "\n";
+} else {
+    if ($quiet) {
+    } else {
+        warn "this-tabledata: No TableData perl module name can be associated with current directory '$cwd'\n";
+    }
+    exit 1;
+}
+
+
+# ABSTRACT: Return name of TableData:: Perl module (without the prefix) associated with the current directory
+# PODNAME:
+
+=head1 SYNOPSIS
+
+ % pwd
+ /home/budi/perl-TableData-Foo-Bar
+
+ % this-tabledata
+ Foo::Bar
+
+Some usage:
+
+ % tabledata `this-tabledata`
+
+
+=head1 DESCRIPTION
+
+This script is a shortcut for:
+
+ % this-mod --namespace-prefix TableData
+
+
+=head1 OPTIONS
+
+=head2 --quiet, -q
+
+=head2 --extract-version, -V
+
+
+=head1 ENVIRONMENT
+
+=head2 DEBUG
+
+Bool. If set to true, will print debugging statement to stderr.
+
+
+=head1 SEE ALSO
+
+Other utilities in L<App::TableDataUtils>.
