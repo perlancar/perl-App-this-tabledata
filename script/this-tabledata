@@ -28,17 +28,24 @@ my $mod = this_mod($cwd, $extract_version);
 if (defined $mod) {
     if (defined $namespace_prefix && length $namespace_prefix) {
         $namespace_prefix =~ s/::\z//;
-        $mod =~ s/\A\Q$namespace_prefix\E(?:::|\z)//i;
+        $mod =~ s/\A\Q$namespace_prefix\E(?:::|\z)//i or do {
+            if ($quiet) {
+            } else {
+                warn "this-tabledata: Perl module associated with current directory '$cwd' is not a TableData:: module\n";
+            }
+            exit 1;
+        };
     }
     print $mod, "\n";
-} else {
-    if ($quiet) {
-    } else {
-        warn "this-tabledata: No TableData perl module name can be associated with current directory '$cwd'\n";
-    }
-    exit 1;
+    exit 0;
 }
 
+FAIL:
+if ($quiet) {
+} else {
+    warn "this-tabledata: No TableData perl module name can be associated with current directory '$cwd'\n";
+}
+exit 1;
 
 # ABSTRACT: Return name of TableData:: Perl module (without the prefix) associated with the current directory
 # PODNAME:
